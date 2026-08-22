@@ -163,15 +163,20 @@ final class LicenseViewModel: ObservableObject {
     }
 
     var usageRestrictionMessage: String? {
-        switch licenseState {
-        case .unlicensed, .trialExpired:
-            return String(
-                format: String(localized: "Your trial has ended. Upgrade to VoiceInk Pro at %@"),
-                "tryvoiceink.com/buy"
-            )
-        case .trial, .licensed:
+        #if LOCAL_BUILD
+            // Self-compiled build: no upgrade banner is injected into transcripts.
             return nil
-        }
+        #else
+            switch licenseState {
+            case .unlicensed, .trialExpired:
+                return String(
+                    format: String(localized: "Your trial has ended. Upgrade to VoiceInk Pro at %@"),
+                    "tryvoiceink.com/buy"
+                )
+            case .trial, .licensed:
+                return nil
+            }
+        #endif
     }
 
     var diagnosticLicenseStatus: String {
